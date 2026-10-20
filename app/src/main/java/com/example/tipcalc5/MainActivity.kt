@@ -27,7 +27,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tipcalc5.ui.theme.TipCalc5Theme
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,11 +58,19 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Базовые цвета приложения
 val PinkInputBg = Color(0xFFFFB6C1)
 val DarkTextColor = Color(0xFF1A1A1A)
 val SliderActiveColor = Color(0xFF5C6B9C)
 val SliderInactiveColor = Color(0xFFE8EAF6)
 
+/**
+ * Расчет процента скидки в зависимости от количества блюд:
+ * 1-2 блюда: 3%
+ * 3-5 блюд: 5%
+ * 6-10 блюд: 7%
+ * Более 10 блюд: 10%
+ */
 fun getDiscountPercent(dishCount: Int): Int {
     return when {
         dishCount in 1..2 -> 3
@@ -76,7 +85,7 @@ fun getDiscountPercent(dishCount: Int): Int {
 fun TipCalculatorScreen(modifier: Modifier = Modifier) {
     var orderAmountText by remember { mutableStateOf("") }
     var dishCountText by remember { mutableStateOf("") }
-    var tipPercent by remember { mutableFloatStateOf(10f) }
+    var tipPercent by remember { mutableIntStateOf(10) }
 
     val dishCount = dishCountText.toIntOrNull() ?: 0
     val discountPercent = getDiscountPercent(dishCount)
@@ -153,9 +162,9 @@ fun TipCalculatorScreen(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Чаевые
+            // Чаевые с отображением выбранного целого процента
             Text(
-                text = "Чаевые:",
+                text = "Чаевые: $tipPercent%",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = DarkTextColor
@@ -164,9 +173,10 @@ fun TipCalculatorScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Slider(
-                value = tipPercent,
-                onValueChange = { tipPercent = it },
+                value = tipPercent.toFloat(),
+                onValueChange = { tipPercent = it.roundToInt() },
                 valueRange = 0f..25f,
+                steps = 24,
                 colors = SliderDefaults.colors(
                     activeTrackColor = SliderActiveColor,
                     inactiveTrackColor = SliderInactiveColor,
