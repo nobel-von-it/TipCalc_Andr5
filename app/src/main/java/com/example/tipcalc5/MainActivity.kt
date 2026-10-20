@@ -234,6 +234,22 @@ fun TipCalculatorScreen(modifier: Modifier = Modifier) {
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Расчет итоговой суммы без излишеств
+            val orderAmount = orderAmountText.toDoubleOrNull() ?: 0.0
+            val discountAmount = orderAmount * (discountPercent / 100.0)
+            val amountAfterDiscount = (orderAmount - discountAmount).coerceAtLeast(0.0)
+            val tipAmount = amountAfterDiscount * (tipPercent / 100.0)
+            val totalAmount = amountAfterDiscount + tipAmount
+
+            Text(
+                text = "Итого к оплате: %.2f ₽".format(totalAmount),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = DarkTextColor
+            )
         }
     }
 }
