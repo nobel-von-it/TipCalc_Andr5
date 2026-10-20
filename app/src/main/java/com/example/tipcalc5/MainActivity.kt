@@ -17,12 +17,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,11 +57,14 @@ class MainActivity : ComponentActivity() {
 
 val PinkInputBg = Color(0xFFFFB6C1)
 val DarkTextColor = Color(0xFF1A1A1A)
+val SliderActiveColor = Color(0xFF5C6B9C)
+val SliderInactiveColor = Color(0xFFE8EAF6)
 
 @Composable
 fun TipCalculatorScreen(modifier: Modifier = Modifier) {
     var orderAmountText by remember { mutableStateOf("") }
     var dishCountText by remember { mutableStateOf("") }
+    var tipPercent by remember { mutableFloatStateOf(10f) }
 
     Surface(
         modifier = modifier
@@ -126,6 +132,48 @@ fun TipCalculatorScreen(modifier: Modifier = Modifier) {
                         unfocusedIndicatorColor = Color.Transparent
                     ),
                     shape = RoundedCornerShape(8.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Чаевые
+            Text(
+                text = "Чаевые:",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = DarkTextColor
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Slider(
+                value = tipPercent,
+                onValueChange = { tipPercent = it },
+                valueRange = 0f..25f,
+                colors = SliderDefaults.colors(
+                    activeTrackColor = SliderActiveColor,
+                    inactiveTrackColor = SliderInactiveColor,
+                    thumbColor = SliderActiveColor
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "0",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkTextColor
+                )
+                Text(
+                    text = "25",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkTextColor
                 )
             }
         }
