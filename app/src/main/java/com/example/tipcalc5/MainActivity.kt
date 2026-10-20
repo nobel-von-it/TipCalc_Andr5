@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -60,11 +62,25 @@ val DarkTextColor = Color(0xFF1A1A1A)
 val SliderActiveColor = Color(0xFF5C6B9C)
 val SliderInactiveColor = Color(0xFFE8EAF6)
 
+fun getDiscountPercent(dishCount: Int): Int {
+    return when {
+        dishCount in 1..2 -> 3
+        dishCount in 3..5 -> 5
+        dishCount in 6..10 -> 7
+        dishCount > 10 -> 10
+        else -> 0
+    }
+}
+
 @Composable
 fun TipCalculatorScreen(modifier: Modifier = Modifier) {
     var orderAmountText by remember { mutableStateOf("") }
     var dishCountText by remember { mutableStateOf("") }
     var tipPercent by remember { mutableFloatStateOf(10f) }
+
+    val dishCount = dishCountText.toIntOrNull() ?: 0
+    val discountPercent = getDiscountPercent(dishCount)
+    val discountOptions = listOf(3, 5, 7, 10)
 
     Surface(
         modifier = modifier
@@ -175,6 +191,48 @@ fun TipCalculatorScreen(modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.Bold,
                     color = DarkTextColor
                 )
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // Скидка (RadioGroup)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Скидка:",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkTextColor
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    discountOptions.forEach { option ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            RadioButton(
+                                selected = (discountPercent == option),
+                                onClick = null,
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = SliderActiveColor,
+                                    unselectedColor = Color.Gray
+                                )
+                            )
+                            Text(
+                                text = "$option%",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = DarkTextColor
+                            )
+                        }
+                    }
+                }
             }
         }
     }
